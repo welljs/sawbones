@@ -1,4 +1,4 @@
-wellDefine('Plugins:BackboneWell:Templates', function (app) {
+wellDefine('Plugins:Sawbones:Templates', function (app) {
 	this.exports(function () {
 			//template api
 			function create (opts) {

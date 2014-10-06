@@ -1,4 +1,4 @@
-wellDefine('Plugins:BackboneWell:Views', function (app) {
+wellDefine('Plugins:Sawbones:Views', function (app) {
 	this.exports(function(){
 		var Controller = function () {
 			app.Events.on('ROUTER_PAGE_CHANGED', this.tryToRender, this);

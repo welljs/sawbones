@@ -1,4 +1,4 @@
-wellDefine('Well:Defaults:Strategy', function (app) {
+wellDefine('Plugins:Sawbones:Defaults:Strategy', function (app) {
 	this.exports(function () {
 		app.Router.configure({
 			actions: {

@@ -1,5 +1,5 @@
 //страница 404 по-умолчанию, если не найдена пользовательская
-wellDefine('Well:Defaults:NotFound', function () {
+wellDefine('Plugins:Sawbones:Defaults:NotFound', function () {
 	this.use(':Layout');
 	this.options({
 		template: ':NotFound',

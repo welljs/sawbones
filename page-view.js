@@ -1,4 +1,4 @@
-wellDefine('Plugins:BackboneWell:PageView', function (app) {
+wellDefine('Plugins:Sawbones:PageView', function (app) {
 	this.exports(function (args) {
 		var args = args  || {};
 		var basicView = args.extendedFrom || Backbone.View;

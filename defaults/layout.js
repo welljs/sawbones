@@ -1,5 +1,5 @@
 //если в пользовательском приложении лэйаут не указан, будет использоваться этот
-wellDefine('Well:Defaults:Layout', function () {
+wellDefine('Plugins:Sawbones:Defaults:Layout', function () {
 	this.options({
 		type: 'view',
 		template: ':Layout',
