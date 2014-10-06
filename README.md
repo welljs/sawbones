@@ -12,10 +12,9 @@ wellDefine('Strategy', function (app, undefined) {
     };
     Strategy.prototype.init = function(){
       var Modules = app.Modules;
-      //initializing plugin
-      Modules.get('Plugins:Sawbones:Main')();
       //after Sawbones initializing in app-namespace will appear Router, Views, 
       //Templates, Collections, Models and Events objects with theirs API
+      Modules.get('Plugins:Sawbones:Main')();
       return this;
     }
     Strategy.prototype.configure = function () {
@@ -38,9 +37,11 @@ wellDefine('Strategy', function (app, undefined) {
         ]
       });
 
+      //Views controller config
       app.Views.configure({
         notFoundModule: 'Views:Pages:NotFound',
         layoutHolder: '#site-container',
+        //default layout module
         layoutModule: 'Views:Layouts:Main',
         //relative to this dir will be calculated templates path and names
         templates: '/app/templates/'
