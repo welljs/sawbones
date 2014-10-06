@@ -1,0 +1,10 @@
+{
+  "name": "well-sawbones",
+  "description": "",
+  "version": "0.1.2",
+  "main": "path/to/main.css",
+  "ignore": [
+    ".git"
+  ],
+  "dependencies": {},
+}
