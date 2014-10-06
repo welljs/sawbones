@@ -4,10 +4,6 @@ __Sawbones__ - это плагин для фреймоврка [Welljs](https://
 
 ```javascript
 wellDefine('Strategy', function (app, undefined) {
-  this.use('Vendor:JqueryWell');
-  this.use('Vendor:UnderscoreWell');
-  this.use('Vendor:BackboneWell');
-  this.use('Vendor:HandlebarsWell');
   this.use('Plugins:Sawbones:Main');
   this.exports(function(){
     var Strategy = function(){
@@ -16,11 +12,6 @@ wellDefine('Strategy', function (app, undefined) {
     };
     Strategy.prototype.init = function(){
       var Modules = app.Modules;
-      //initializing globals jQuery($), Backbone, _ (underscore) and Handlebars
-      Modules.get('Vendor:JqueryWell')();
-      Modules.get('Vendor:UnderscoreWell')();
-      Modules.get('Vendor:BackboneWell')();
-      Modules.get('Vendor:HandlebarsWell')();
       //initializing plugin
       Modules.get('Plugins:Sawbones:Main')();
       //after Sawbones initializing in app-namespace will appear Router, Views, 
