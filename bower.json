@@ -4,7 +4,18 @@
   "version": "0.1.2",
   "main": "path/to/main.css",
   "ignore": [
-    ".git"
+    ".git",
+    ".idea",
+    "apps",
+    "plugins",
+    "server",
+    "vendor",
+    "well"
   ],
-  "dependencies": {}
+  "dependencies": {
+	"jquery": ">=1.7",
+	"underscore": ">=1.7",
+	"backbone": ">=1.1.2",
+	"handlebars-v-1-3" : "*"
+  }
 }
