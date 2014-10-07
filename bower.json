@@ -10,7 +10,8 @@
     "plugins",
     "server",
     "vendor",
-    "well"
+    "well",
+    "defaults"
   ],
   "dependencies": {
 	"jquery": ">=1.7",
