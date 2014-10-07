@@ -4,9 +4,7 @@ wellDefine('Strategy', function (app, undefined) {
 	this.use('Vendor:BackboneWell');
 	this.use('Vendor:HandlebarsWell');
 	this.use('Vendor:HighlightPackWell');
-	this.use('Plugins:Sawbones:Router');
-	this.use('Plugins:Sawbones:Views');
-	this.use('Plugins:Sawbones:Templates');
+	this.use('Plugins:Sawbones:Main');
 	this.use('Utils:HandlebarsHelpers');
 	this.use('Utils:Helpers');
 
@@ -23,8 +21,7 @@ wellDefine('Strategy', function (app, undefined) {
 			Modules.get('Vendor:BackboneWell')();
 			Modules.get('Vendor:HandlebarsWell')();
 			Modules.get('Vendor:HighlightPackWell')();
-			app.Events = _.extend(Backbone.Events, {});
-			app.Router = new (Modules.get('Plugins:Sawbones:Router')());
+			Modules.get('Plugins:Sawbones:Main')();
 			app.Router.configure({
 				actions: {
 					'/': 'Views:Pages:Overview',
@@ -43,8 +40,6 @@ wellDefine('Strategy', function (app, undefined) {
 				]
 			});
 
-			app.Templates = new (Modules.get('Plugins:Sawbones:Templates'));
-			app.Views = new (Modules.get('Plugins:Sawbones:Views'));
 			app.Views.configure({
 				notFoundModule: 'Views:Pages:NotFound',
 				layoutHolder: '#site-container',
