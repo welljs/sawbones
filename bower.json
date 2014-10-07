@@ -5,10 +5,11 @@
   "main": "sawbones.min.js",
   "ignore": [
     ".git",
+    ".gitignore",
     ".idea",
     "apps",
     "plugins",
-    "server/**/*.*",
+    "server",
     "vendor",
     "well",
     "defaults"
