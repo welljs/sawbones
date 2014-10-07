@@ -4,14 +4,14 @@
   "version": "0.1.2",
   "main": "path/to/main.css",
   "ignore": [
-    ".git",
-    ".idea",
-    "apps",
-    "plugins",
-    "server/",
-    "vendor",
-    "well",
-    "defaults"
+    "./.git",
+    "./.idea",
+    "./apps",
+    "./plugins",
+    "./server/",
+    "./vendor",
+    "./well",
+    "./defaults"
   ],
   "dependencies": {
 	"jquery": ">=1.7",
