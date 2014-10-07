@@ -8,7 +8,7 @@
     "./.idea",
     "./apps",
     "./plugins",
-    "./server/**/*.*",
+    "server/**/*.*",
     "./vendor",
     "./well",
     "./defaults"
