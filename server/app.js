@@ -3,8 +3,8 @@ var express = require('express');
 var path = require('path');
 var app = express();
 
-app.use(require('body-parser')()); // стандартный модуль, для парсинга JSON в запросах
-app.use(require('method-override')()); // поддержка put и delete
+app.use(require('body-parser')());
+app.use(require('method-override')());
 
 function createServer(name, port, currentEnv) {
 	var env = {
