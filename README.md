@@ -1,58 +1,73 @@
 __Sawbones__ - это плагин для фреймоврка [Welljs](https://github.com/welljs/welljs) который позволяет быстро развернуть Backbone-приложение
 
-Так выглядит обыкновенный модуль стратегии:
+Так выглядит обыкновенный модуль стратегии для использующий Sawbones:
 
 ```javascript
 wellDefine('Strategy', function (app, undefined) {
-  this.use('Plugins:Sawbones:Main');
-  this.exports(function(){
-    var Strategy = function(){
-      this.init();
-      this.configure();
-    };
-    Strategy.prototype.init = function(){
-      var Modules = app.Modules;
-      //after Sawbones initializing in app-namespace will appear Router, Views, 
-      //Templates, Collections, Models and Events objects with theirs API
-      Modules.get('Plugins:Sawbones:Main')();
-      return this;
-    }
-    Strategy.prototype.configure = function () {
-      //configuring router
-      app.Router.configure({
-        actions: {
-          '/': 'Views:Pages:Home',
-          '/about': 'Views:Pages:About',
-          '/docs':  'Views:Pages:Docs',
-          // also it's possible to specify layout, if it differs from main. 
-          // For example Landing page
-          '/features': {
-            page: 'Views:Pages:Features',
-            layout: 'Views:Layouts:Landing'
-          },
-        },
-        //backbone router rules. By default pattern to comply with RFC 3987 
-        routes: [
-          /^[A-Za-z0-9\/_-]{0,24}$/
-        ]
-      });
+	this.use('Vendor:JqueryWell');
+	this.use('Vendor:UnderscoreWell');
+	this.use('Vendor:BackboneWell');
+	this.use('Vendor:HandlebarsWell');
+	this.use('Vendor:HighlightPackWell');
+	this.use('Plugins:Sawbones:Main');
+	this.use('Utils:HandlebarsHelpers');
+	this.use('Utils:Helpers');
+	this.exports(function () {
+		var WellSite = function () {
+			this.init();
+			this.configure();
+			this.start();
+		};
+		WellSite.prototype.init = function () {
+			var Modules = app.Modules;
+			Modules.get('Vendor:JqueryWell')();
+			Modules.get('Vendor:UnderscoreWell')();
+			Modules.get('Vendor:BackboneWell')();
+			Modules.get('Vendor:HandlebarsWell')();
+			Modules.get('Vendor:HighlightPackWell')();
+			Modules.get('Plugins:Sawbones:Main')();
+			//global Helpers
+			app.Helpers = new(Modules.get('Utils:Helpers'));
+			//initializing Handlebars helpers
+			new (Modules.get('Utils:HandlebarsHelpers'));
+			return this;
+		};
 
-      //Views controller config
-      app.Views.configure({
-        notFoundModule: 'Views:Pages:NotFound',
-        layoutHolder: '#site-container',
-        //default layout module
-        layoutModule: 'Views:Layouts:Main',
-        //relative to this dir will be calculated templates path and names
-        templates: '/app/templates/'
-      });
+		WellSite.prototype.configure = function () {
+			app.Router.configure({
+				actions: {
+					'/': 'Views:Pages:Overview',
+					'/installation': 'Views:Pages:Installation',
+					'/features': {
+						page: 'Views:Pages:Features',
+						layout: 'Views:Layouts:Main'
+					},
+					'/docs': {
+						page: 'Views:Pages:Docs'
+					}
+				},
+				//backbone router rules
+				routes: [
+					/^[A-Za-z0-9\/_-]{0,24}$/
+				]
+			});
 
-      $(document).ready(function () {
-        app.Router.start();
-      });
-      
-    }
-    return new Strategy();
-  });
+			app.Views.configure({
+				notFoundModule: 'Views:Pages:NotFound',
+				layoutHolder: '#site-container',
+				layoutModule: 'Views:Layouts:Main',
+				//relative to this dir will be calculated templates name
+				templates: '/app/templates/'
+			});
+			return this;
+		};
+
+		WellSite.prototype.start = function () {
+			$(document).ready(function () {
+				app.Router.start();
+			})
+		};
+		return new WellSite();
+	});
 });
 ```
