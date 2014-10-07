@@ -7,13 +7,12 @@ wellDefine('Strategy', function (app, undefined) {
 	this.use('Plugins:Sawbones:Main');
 	this.use('Utils:HandlebarsHelpers');
 	this.use('Utils:Helpers');
-
 	this.exports(function () {
-
 		var WellSite = function () {
 			this.init();
+			this.configure();
+			this.start();
 		};
-
 		WellSite.prototype.init = function () {
 			var Modules = app.Modules;
 			Modules.get('Vendor:JqueryWell')();
@@ -22,6 +21,14 @@ wellDefine('Strategy', function (app, undefined) {
 			Modules.get('Vendor:HandlebarsWell')();
 			Modules.get('Vendor:HighlightPackWell')();
 			Modules.get('Plugins:Sawbones:Main')();
+			//global Helpers
+			app.Helpers = new(Modules.get('Utils:Helpers'));
+			//initializing Handlebars helpers
+			new (Modules.get('Utils:HandlebarsHelpers'));
+			return this;
+		};
+
+		WellSite.prototype.configure = function () {
 			app.Router.configure({
 				actions: {
 					'/': 'Views:Pages:Overview',
@@ -47,11 +54,10 @@ wellDefine('Strategy', function (app, undefined) {
 				//relative to this dir will be calculated templates name
 				templates: '/app/templates/'
 			});
-			//global Helpers
-			app.Helpers = new(Modules.get('Utils:Helpers'));
-			//initializing Handlebars helpers
-			new (Modules.get('Utils:HandlebarsHelpers'));
+			return this;
+		};
 
+		WellSite.prototype.start = function () {
 			$(document).ready(function () {
 				app.Router.start();
 			})
