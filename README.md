@@ -1,6 +1,6 @@
 __Sawbones__ - это плагин для фреймоврка [Welljs](https://github.com/welljs/welljs) который позволяет быстро развернуть Backbone-приложение
 
-Так выглядит обыкновенный модуль стратегии для использующий Sawbones:
+Так выглядит обыкновенный модуль стратегии использующий Sawbones:
 
 ```javascript
 wellDefine('Strategy', function (app, undefined) {
