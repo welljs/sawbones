@@ -41,10 +41,13 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 				},
 
 				registerPartial: function (opts) {
+					if (!opts.html && !opts.templateName)
+						return console.log('error: ', 'no html');
+
 					if (app.isProduction)
 						Handlebars.partials[opts.partialName] = Handlebars.templates[app.transformToPath(opts.templateName)];
 					else
-						Handlebars.registerPartial(opts.partialName, opts.html);
+						Handlebars.registerPartial(opts.partialName, opts.html || this.get(opts.templateName).render());
 				},
 
 				isNotFound: function (name) {
