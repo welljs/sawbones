@@ -25,9 +25,10 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 			proxy: function () {
 				if (typeof _gaq !== 'undefined' && _.isArray(_gaq))
 					_gaq.push(['_trackPageview', Backbone.history.root + Backbone.history.getFragment()]);
-				var args = this.parseUrl(Backbone.history.fragment);
-				this.currentPage = args.route === '/' ? '' :  args.route;
-				app.Events.trigger('ROUTER_PAGE_CHANGED', this.getRouteAction(args.route), {route: args.route, params: args.params});
+				var params = Array.prototype.slice.call(arguments);
+				var route = this.parseUrl();
+				this.currentPage = route;
+				app.Events.trigger('ROUTER_PAGE_CHANGED', this.getRouteAction(route), {route: route, params: params});
 				this.customLayout = null;
 			},
 
@@ -65,11 +66,8 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 			},
 
 			parseUrl: function (url) {
-				var args = url.split('/');
-				return {
-					route: args[0] ? '/' + args[0] : '/',
-					params: args[1] || ''
-				};
+				var args = Backbone.history.fragment.split('/');
+				return args[0] ? '/' + args[0] : '/';
 			}
 		});
 	});
