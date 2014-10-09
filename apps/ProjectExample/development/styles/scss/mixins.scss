@@ -1,0 +1,19 @@
+@mixin transition($time){
+  -webkit-transition: all $time ease;
+  -moz-transition: all $time ease;
+  -ms-transition: all $time ease;
+  -o-transition: all $time ease;
+  transition: all $time ease;
+}
+
+@mixin border-radius($val){
+  -webkit-border-radius: $val;
+  -moz-border-radius: $val;
+  border-radius: $val;
+}
+
+@mixin center-page($width){
+  margin-left: auto;
+  margin-right: auto;
+  width: $width;
+}

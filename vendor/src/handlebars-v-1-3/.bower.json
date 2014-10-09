@@ -1,0 +1,32 @@
+{
+  "name": "Handlebars-v-1-3",
+  "description": "For compatible with projects which use old version of templates",
+  "keywords": [
+    "handlebars",
+    "runtime",
+    "1.3",
+    "v 1.3"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/welljs/handlebars-v-1-3.git"
+  },
+  "main": [
+    "handlebars.js",
+    "handlebars.runtime.js"
+  ],
+  "ignore": [
+    ".git",
+    "bower.json"
+  ],
+  "homepage": "https://github.com/welljs/handlebars-v-1-3",
+  "_release": "3f0c38a4f5",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "3f0c38a4f5217aa8cbff5b942df8ae1e115b904e"
+  },
+  "_source": "git://github.com/welljs/handlebars-v-1-3.git",
+  "_target": "*",
+  "_originalSource": "handlebars-v-1-3"
+}

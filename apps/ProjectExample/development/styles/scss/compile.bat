@@ -1,0 +1,2 @@
+cd C:\Ruby200-x64\bin
+sass --compass --watch  C://Projects/welljs/apps/ProjectExample/development/styles/scss/main.scss:C://Projects/welljs/apps/ProjectExample/development/styles/css/main.css --style compressed
