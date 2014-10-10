@@ -182,16 +182,20 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 				//когда загружены все данные, можно отрендерить лэйаут и страницу
 				app.Events.trigger('BEFORE_PAGE_RENDERED', {page: page, layout: layout, params: params.params});
 				this.renderLayout.apply(this, [layout, params.params]);
-				this.renderPage.apply(this, [page, params.params]);
-				this.hideOverlay();
-				app.Events.trigger('PAGE_RENDERED', {page: page, layout: layout, params: params.params});
+
+				var pageView = this.getInitialized(page);
+				pageView.requestData(function() {
+					self.renderPage.apply(self, [page, params.params]);
+					self.hideOverlay();
+					app.Events.trigger('PAGE_RENDERED', {page: page, layout: layout, params: params.params});
+				});
 				return this;
 			},
 
 			renderPage: function (module, params) {
 				this.currentPage = module;
 				module.el = this.currentLayout.view.pageContainer;
-				return this.render(module, params);
+				return this._render(module, params);
 			},
 
 			renderLayout: function (module, params) {
@@ -199,14 +203,11 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 					return this.currentLayout.view;
 				this.currentLayout = module;
 				module.el = $(this.config.layoutHolder || 'body');
-				return this.currentLayout.view = this.render(module, params);
+				return this.currentLayout.view = this._render(module, params);
 			},
 
-			render: function (module, params) {
-				var view = (this.isInitialized(module.name))
-					? this.getInitialized(module)
-					: this.initialize(module);
-
+			_render: function (module, params) {
+				var view = this.getInitialized(module);
 				if (_.isFunction(view.render)) {
 					view.render(params);
 				}
@@ -214,7 +215,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 			},
 
 			getInitialized: function (module) {
-				var view = this.initialized[module.name];
+				var view = this.initialized[module.name] || this.initialize(module);
 				view.$el = module.el;
 				return view;
 			},
@@ -234,10 +235,6 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 				}, options));
 				view.template = template;
 				return view;
-			},
-
-			isInitialized: function (viewName) {
-				return !!this.initialized[viewName];
 			},
 
 			showOverlay: function () {

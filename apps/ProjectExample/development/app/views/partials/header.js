@@ -7,7 +7,7 @@ wellDefine('Views:Partials:Header', function (app) {
 				app.Events.on('PAGE_RENDERED', this.onItemClick, this);
 			},
 			onItemClick: function (options) {
-				var route = (options.params.route).replace('/', '') || 'home';
+				var route = (app.Router.currentPage).replace('/', '') || 'home';
 				this.selectedItem.removeClass('active');
 				this.selectedItem = this.ul.find('.' + route).addClass('active');
 			}
