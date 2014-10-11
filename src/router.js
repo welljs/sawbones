@@ -27,8 +27,8 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 					_gaq.push(['_trackPageview', Backbone.history.root + Backbone.history.getFragment()]);
 				var params = Array.prototype.slice.call(arguments);
 				var action = this.parseUrl(Backbone.history.fragment, params);
-				this.currentPage = action.route;
-				app.Events.trigger('ROUTER_PAGE_CHANGED', this.getRouteAction(action.route), {route: action.route, params: params});
+				this.currentPage = action;
+				app.Events.trigger('ROUTER_PAGE_CHANGED', this.getRouteAction(action), {route: action, params: params});
 				this.customLayout = null;
 			},
 
