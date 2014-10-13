@@ -28,7 +28,6 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 				_start: function () {
 					if (app.isProduction)
 						this._processCompiled();
-					this._registerHelpers();
 					return this;
 				},
 
@@ -55,14 +54,16 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 				},
 
 				load: function (files, next, err) {
+					if (_.isString(files))
+						files = [files];
 					var missing = _.filter(files, function (file) {
-						return !this.exist(file.name)
+						return !this.exist(file)
 					}, this);
 
 					var defs = [];
 					_.each(missing, function (file, index) {
 						defs.push(
-							this.getAjax(file.path, file.name, err)
+							this.getAjax(file, err)
 						);
 					}, this);
 					$.when.apply($, defs).then(
@@ -71,7 +72,8 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 				},
 
 				//from html
-				getAjax: function (path, file, err) {
+				getAjax: function (file, err) {
+					var path = (this.config.root || '/') + app.transformToPath(file);
 					return $.ajax({
 						url: path + '.html',
 						dataType: 'html',
@@ -81,7 +83,7 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 								path: path,
 								renderer: Handlebars.compile(html)
 							});
-							this.storage[app.transformToName(file)] = template;
+							this.storage[file] = template;
 						},
 						error: function (res) {
 							_.isFunction(err) && err(res);
@@ -100,22 +102,6 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 						});
 					}
 					return this;
-				},
-
-				_registerHelpers: function () {
-					Handlebars.registerHelper('partial', function (name) {
-						var view = (!app.Views.isInitialized(name))
-							? app.Views.initialize(name)
-							: app.Views.getInitialized(name);
-						return view ? view.$el.html() : '';
-					});
-					return this;
-				},
-
-				getHtmlPath: function (module) {
-					return (module.getOption('isDefault'))
-						? '/'
-						: (this.config.html || '/');
 				}
 			});
 			return new Controller();

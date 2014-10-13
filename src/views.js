@@ -64,18 +64,11 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 
 				var templates = [];
 				var template = this.getTemplate(module);
-				if (template) {
-					templates.push({
-						name: template,
-						path: this.getHtmlPath(module) + app.transformToPath(module.getOption('template'))
-					});
-				}
+				if (template)
+					templates.push(module.getOption('template'));
 
 				_.each(this.getPartials(module), function (partial) {
-					templates.push({
-						name: partial,
-						path: this.getHtmlPath(module) + app.transformToPath(partial)
-					});
+					templates.push(partial);
 				}, this);
 
 				if (_.isEmpty(templates))
@@ -100,7 +93,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 
 			waitOnQueueComplete: function (modules, next) {
 				var incomplete = this.getIncomplete(modules);
-				if (_.isEmpty(incomplete)) return;
+				if (_.isEmpty(incomplete)) return next.call(this);
 				app.Events.on('MODULE_COMPLETED', function (module) {
 					var index = incomplete.indexOf(module.name);
 					//проверка на то, из текущей ли очереди загружен модуль
@@ -120,20 +113,20 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 				this.showOverlay();
 
 				if (_.isString(action)) {
-					layoutName = this.getConfigParam('layoutModule') || 'Well:Defaults:Layout';
+					layoutName = this.getConfigParam('layoutModule') || ':Defaults:Layout';
 					pageName = action;
 				}
 				//не определена рутером
 				else if (!action) {
-					layoutName = this.getConfigParam('layoutModule') || 'Well:Defaults:Layout';
-					pageName = this.getConfigParam('notFoundModule') || 'Well:Defaults:NotFound';
+					layoutName = this.getConfigParam('layoutModule') || ':Defaults:Layout';
+					pageName = this.getConfigParam('notFoundModule') || ':Defaults:NotFound';
 				}
 				else if (!action.page && action.layout) {
 					layoutName = action.layout
-					pageName = this.getConfigParam('notFoundModule') || 'Well:Defaults:NotFound';
+					pageName = this.getConfigParam('notFoundModule') || ':Defaults:NotFound';
 				}
 				else {
-					layoutName = action.layout || this.getConfigParam('layoutModule') || 'Well:Defaults:Layout';
+					layoutName = action.layout || this.getConfigParam('layoutModule') || ':Defaults:Layout';
 					pageName = action.page;
 				}
 
@@ -234,6 +227,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 					el: module.el
 				}, options));
 				view.template = template;
+				view.module = module;
 				return view;
 			},
 
@@ -243,12 +237,6 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 
 			hideOverlay: function () {
 				this.isOverlayVisible = false;
-			},
-
-			getHtmlPath: function (module) {
-				return (module.getOption('isDefault'))
-					? '/'
-					: (this.config.templates || '/');
 			}
 
 		});
