@@ -64,18 +64,11 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 
 				var templates = [];
 				var template = this.getTemplate(module);
-				if (template) {
-					templates.push({
-						name: template,
-						path: this.getHtmlPath(module) + app.transformToPath(module.getOption('template'))
-					});
-				}
+				if (template)
+					templates.push(module.getOption('template'));
 
 				_.each(this.getPartials(module), function (partial) {
-					templates.push({
-						name: partial,
-						path: this.getHtmlPath(module) + app.transformToPath(partial)
-					});
+					templates.push(partial);
 				}, this);
 
 				if (_.isEmpty(templates))
@@ -243,12 +236,6 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 
 			hideOverlay: function () {
 				this.isOverlayVisible = false;
-			},
-
-			getHtmlPath: function (module) {
-				return (module.getOption('isDefault'))
-					? '/'
-					: (this.config.templates || '/');
 			}
 
 		});

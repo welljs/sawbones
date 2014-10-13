@@ -50,10 +50,13 @@ wellDefine('Strategy', function (app, undefined) {
 			app.Views.configure({
 				notFoundModule: 'Views:Pages:NotFound',
 				layoutHolder: '#site-container',
-				layoutModule: 'Views:Layouts:Main',
-				//relative to this dir will be calculated templates name
-				templates: '/app/templates/'
+				layoutModule: 'Views:Layouts:Main'
 			});
+
+			app.Templates.configure({
+				root:'/app/templates/'
+			});
+
 			return this;
 		};
 
