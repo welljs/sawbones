@@ -1,5 +1,5 @@
 wellDefine('Strategy', function (app, undefined) {
-	this.use('Vendor:JqueryWell');
+	this.use('Vendor:JqueryWell', true);
 	this.use('Vendor:UnderscoreWell');
 	this.use('Vendor:BackboneWell');
 	this.use('Vendor:HandlebarsWell');
@@ -15,7 +15,6 @@ wellDefine('Strategy', function (app, undefined) {
 		};
 		WellSite.prototype.init = function () {
 			var Modules = app.Modules;
-			Modules.get('Vendor:JqueryWell')();
 			Modules.get('Vendor:UnderscoreWell')();
 			Modules.get('Vendor:BackboneWell')();
 			Modules.get('Vendor:HandlebarsWell')();
