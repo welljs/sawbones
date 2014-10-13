@@ -227,6 +227,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 					el: module.el
 				}, options));
 				view.template = template;
+				view.module = module;
 				return view;
 			},
 
