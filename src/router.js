@@ -23,8 +23,6 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 			},
 
 			proxy: function () {
-				if (typeof _gaq !== 'undefined' && _.isArray(_gaq))
-					_gaq.push(['_trackPageview', Backbone.history.root + Backbone.history.getFragment()]);
 				var params = Array.prototype.slice.call(arguments);
 				var action = this.parseUrl(Backbone.history.fragment, params);
 				this.currentPage = action;
