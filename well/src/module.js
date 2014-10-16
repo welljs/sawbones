@@ -5,8 +5,8 @@ var Module = function (name, fn, next, app) {
 			name: name,
 			deps: [],
 			props: {},
-			onCompleteFns: [],
-			isComplete: true
+			isComplete: true,
+			exportFn: function(){}
 		});
 		try {
 			fn.call(this, app);
@@ -79,11 +79,10 @@ var Module = function (name, fn, next, app) {
 				var deps = _.clone(Modules.findMissing(this.deps));
 				var self = this;
 				//на девелопменте разобраны по файлам и их надо подгружать
-				Modules.require(this.deps, function () {
-
+				Modules.require(this.deps, function (err, modules) {
+					if (err)
+						return console.log('Error in deps requiring...', err);
 					next(self);
-				}, function (err) {
-					console.log('Error in deps requiring...', err);
 				});
 			}
 			return this;

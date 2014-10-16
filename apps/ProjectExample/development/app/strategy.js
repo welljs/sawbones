@@ -15,12 +15,6 @@ wellDefine('Strategy', function (app, undefined) {
 		};
 		WellSite.prototype.init = function () {
 			var Modules = app.Modules;
-//			Modules.get('Vendor:JqueryWell')();
-//			Modules.get('Vendor:UnderscoreWell')();
-//			Modules.get('Vendor:BackboneWell')();
-//			Modules.get('Vendor:HandlebarsWell')();
-//			Modules.get('Vendor:HighlightPackWell')();
-//			Modules.get('Plugins:Sawbones:Main')();
 			//global Helpers
 			app.Helpers = new(Modules.get('Utils:Helpers'));
 			//initializing Handlebars helpers

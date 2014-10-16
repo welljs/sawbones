@@ -1,6 +1,6 @@
 (function(){
-	'use strict';
-	//a bit of functionality borrowed from Underscore.js
+	 'use strict'; 
+ 	//a bit of functionality borrowed from Underscore.js
 	var Utils = function () {};
 	var nativeKeys = Object.keys;
 
@@ -185,6 +185,21 @@
 		return results;
 	};
 
+	Utils.prototype.merge = function () {
+		var res = [];
+		this.each(arguments, function (arg) {
+			var length = arg.length;
+			var i = -1;
+			var value;
+			while(++i < length) {
+				value = arg[i];
+				if (res.indexOf(value) === -1)
+					res.push(value);
+			}
+		});
+		return res;
+	};
+
 	var _ = _ ? _ : new Utils();
 	//Events ideas little borrowed from Backbone.js
 	var EventsController = function () {
@@ -245,15 +260,15 @@
 		};
 	};
 
-	var autoInits = [];
-	var Module = function (name, fn, next, app) {
+var autoInits = [];
+var Module = function (name, fn, next, app) {
 		_.extend(this, {
 			app: app,
 			name: name,
 			deps: [],
 			props: {},
-			onCompleteFns: [],
-			isComplete: true
+			isComplete: true,
+			exportFn: function(){}
 		});
 		try {
 			fn.call(this, app);
@@ -337,6 +352,22 @@
 	});
 
 
+	function initializeAutoInited(){
+		//меняю последовательность, чтобы удобно было удалять
+		var arr = autoInits.slice(0).reverse();
+		var i = autoInits.length;
+		var module;
+		while (--i >= 0) {
+			module = this.modules[arr[i]];
+			if (module) {
+				arr.splice(i, 1);
+				module.exportFn.call(window);
+			}
+		}
+		//то что осталось сохраняю и обратно меняю последовательность
+		autoInits = arr.slice(0).reverse();
+	}
+
 	var Queue = function (names, next, app) {
 		this.modules = {};
 		this.app = app;
@@ -346,14 +377,6 @@
 	};
 
 	_.extend(Queue.prototype, {
-		_initializeAutoinited: function () {
-			_.each(autoInits, function (moduleName) {
-				var fn = this.app.Modules.get(moduleName);
-				if (_.isFunction(fn))
-					fn();
-			}, this);
-		},
-
 		isQueueEmpty: function () {
 			return !this.names.length;
 		},
@@ -373,7 +396,7 @@
 				//формирую список модулей и их зависимостей
 				var exportList =_.extend(this.modules, app.Modules.getDeps(this.modules));
 				//колбэк самого первого уровня вложенности (относительно очереди)
-				this._initializeAutoinited();
+				initializeAutoInited.call(this);
 				this.next(undefined, exportList);
 			}
 			return this;
@@ -553,5 +576,5 @@
 			});
 		}
 	});
-	new Main(window.WellConfig || {});
+	new Main(window.WellConfig || {});  
 })();
