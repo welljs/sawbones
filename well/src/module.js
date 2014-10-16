@@ -1,9 +1,10 @@
-	var Module = function (name, fn, next, app) {
+var autoInits = [];
+var Module = function (name, fn, next, app) {
 		_.extend(this, {
 			app: app,
 			name: name,
 			deps: [],
-			config: {},
+			props: {},
 			onCompleteFns: [],
 			isComplete: true
 		});
@@ -13,12 +14,13 @@
 		catch (e) {
 			console.log('error in module: ' + name);
 		}
-		this._setType(this.config.type || name.split(':')[0]);
+		this._setType(this.props.type || name.split(':')[0]);
 		!this.deps.length ? next(this)	: this.waitForDeps(next);
 	};
 
 	_.extend(Module.prototype, {
-		use: function (module) {
+		use: function (module, autoInit) {
+			autoInit && autoInits.push(module);
 			this.deps.push(this._toFullName(module));
 			return this;
 		},
@@ -26,7 +28,7 @@
 		options: function (options) {
 			var opts = options || {};
 			opts.template = this._toFullName(opts.template);
-			this.config = opts;
+			this.props = opts;
 			return this;
 		},
 
@@ -36,7 +38,7 @@
 		},
 
 		getOption: function (prop) {
-			return this.config[prop];
+			return this.props[prop];
 		},
 
 		_isShortHand: function (name) {
@@ -61,7 +63,7 @@
 				case 'plugin': this.isPlugin = true; break;
 				case 'well': this.isCore = true; break;
 			}
-			this.config['type'] = type;
+			this.props['type'] = type;
 			return this;
 		},
 
@@ -78,6 +80,7 @@
 				var self = this;
 				//на девелопменте разобраны по файлам и их надо подгружать
 				Modules.require(this.deps, function () {
+
 					next(self);
 				}, function (err) {
 					console.log('Error in deps requiring...', err);

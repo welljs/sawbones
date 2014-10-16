@@ -7,7 +7,14 @@
 	};
 
 	_.extend(Queue.prototype, {
-		onModuleDefined: function (module) {
+		_initializeAutoinited: function () {
+			_.each(autoInits, function (moduleName) {
+				var fn = app.get(moduleName);
+				if (_.isFunction(mod))
+					fn();
+			});
+		},
+		onModuleDefined: function (module, undefined) {
 			//если модуль из этой очереди, то удалить его из очереди
 			if (this.exist(module.name)) {
 				this.modules[module.name] = module;
@@ -21,7 +28,8 @@
 				//формирую список модулей и их зависимостей
 				var exportList =_.extend(this.modules, app.Modules.getDeps(this.modules));
 				//колбэк самого первого уровня вложенности (относительно очереди)
-				this.next(exportList, this);
+				this._initializeAutoinited();
+				this.next(undefined, exportList);
 			}
 			return this;
 		},

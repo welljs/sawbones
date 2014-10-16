@@ -1,10 +1,10 @@
 wellDefine('Strategy', function (app, undefined) {
-	this.use('Vendor:JqueryWell');
-	this.use('Vendor:UnderscoreWell');
-	this.use('Vendor:BackboneWell');
-	this.use('Vendor:HandlebarsWell');
-	this.use('Vendor:HighlightPackWell');
-	this.use('Plugins:Sawbones:Main');
+	this.use('Vendor:JqueryWell', true);
+	this.use('Vendor:UnderscoreWell', true);
+	this.use('Vendor:BackboneWell', true);
+	this.use('Vendor:HandlebarsWell', true);
+	this.use('Vendor:HighlightPackWell', true);
+	this.use('Plugins:Sawbones:Main', true);
 	this.use('Utils:HandlebarsHelpers');
 	this.use('Utils:Helpers');
 	this.exports(function () {
@@ -15,12 +15,12 @@ wellDefine('Strategy', function (app, undefined) {
 		};
 		WellSite.prototype.init = function () {
 			var Modules = app.Modules;
-			Modules.get('Vendor:JqueryWell')();
-			Modules.get('Vendor:UnderscoreWell')();
-			Modules.get('Vendor:BackboneWell')();
-			Modules.get('Vendor:HandlebarsWell')();
-			Modules.get('Vendor:HighlightPackWell')();
-			Modules.get('Plugins:Sawbones:Main')();
+//			Modules.get('Vendor:JqueryWell')();
+//			Modules.get('Vendor:UnderscoreWell')();
+//			Modules.get('Vendor:BackboneWell')();
+//			Modules.get('Vendor:HandlebarsWell')();
+//			Modules.get('Vendor:HighlightPackWell')();
+//			Modules.get('Plugins:Sawbones:Main')();
 			//global Helpers
 			app.Helpers = new(Modules.get('Utils:Helpers'));
 			//initializing Handlebars helpers
