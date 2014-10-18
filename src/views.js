@@ -18,7 +18,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 			},
 
 			get: function (viewName) {
-				return app.Modules.getModule(viewName).exportFn();
+				return app.Modules.getModule(viewName).exportsFn();
 			},
 
 			getModule: function (viewName) {
