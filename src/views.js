@@ -109,9 +109,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 
 			tryToRender: function (action, params) {
 				var page, layout, self = this, o, layoutName, pageName;
-
 				this.showOverlay();
-
 				if (_.isString(action)) {
 					layoutName = this.getConfigParam('layoutModule') || ':Defaults:Layout';
 					pageName = action;
@@ -172,6 +170,8 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 					});
 				}
 
+				if (this.currentPage)
+					app.Events.trigger('PAGE_LEAVE', this.currentPage.view);
 				//когда загружены все данные, можно отрендерить лэйаут и страницу
 				app.Events.trigger('BEFORE_PAGE_RENDERED', {page: page, layout: layout, params: params.params});
 				this.renderLayout.apply(this, [layout, params.params]);
@@ -188,7 +188,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 			renderPage: function (module, params) {
 				this.currentPage = module;
 				module.el = this.currentLayout.view.pageContainer;
-				return this._render(module, params);
+				return this.currentPage.view = this._render(module, params);
 			},
 
 			renderLayout: function (module, params) {

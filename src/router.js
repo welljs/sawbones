@@ -3,7 +3,9 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 		return Backbone.Router.extend({
 			currentPage: null,
 			initialize: function (options) {
-				this.config = {};
+				this.config = {
+					defaultPage: '/'
+				};
 			},
 
 			defineRoutes: function (routes) {
@@ -25,9 +27,15 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 			proxy: function () {
 				var params = Array.prototype.slice.call(arguments);
 				var action = this.parseUrl(Backbone.history.fragment, params);
-				this.currentPage = action;
-				app.Events.trigger('ROUTER_PAGE_CHANGED', this.getRouteAction(action), {route: action, params: params});
-				this.customLayout = null;
+				var self = this;
+				this.accessPage(action, params, function (err) {
+					if (err)
+						return self.go(self.currentPage || self.config.defaultPage);
+
+					self.currentPage = action;
+					app.Events.trigger('ROUTER_PAGE_CHANGED', self.getRouteAction(action), {route: action, params: params});
+					self.customLayout = null;
+				});
 			},
 
 			go: function (url, options) {
