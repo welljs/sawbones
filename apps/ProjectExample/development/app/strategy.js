@@ -55,8 +55,14 @@ wellDefine('Strategy', function (app, undefined) {
 		};
 
 		WellSite.prototype.start = function () {
+
+			$('body').on('click', 'a[href^="/"]', function (e) {
+				e.preventDefault();
+				app.Router.go($(this).attr('href'), {trigger: true});
+			});
+
 			$(document).ready(function () {
-				app.Router.start();
+				app.Router.start({pushState: true});
 			})
 		};
 		return new WellSite();
