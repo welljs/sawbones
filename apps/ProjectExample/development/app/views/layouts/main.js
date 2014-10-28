@@ -1,6 +1,6 @@
 wellDefine('Views:Layouts:Main', function (app) {
 	this.use('Views:Partials:Header');
-	this.options({
+	this.set({
 		template: 'Layouts:Main',
 		partials: [
 			'Partials:Header'

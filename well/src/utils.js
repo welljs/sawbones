@@ -1,6 +1,12 @@
 	//a bit of functionality borrowed from Underscore.js
 	var Utils = function () {};
 	var nativeKeys = Object.keys;
+
+	var ObjProto = Object.prototype;
+	var hasOwnProperty =  ObjProto.hasOwnProperty;
+	var toString = ObjProto.toString;
+	var nativeBind = Function.prototype.bind;
+
 	var createCallback = function(func, context, argCount) {
 		if (context === void 0) return func;
 		switch (argCount == null ? 3 : argCount) {
@@ -176,6 +182,31 @@
 			if (predicate(value, index, list)) results.push(value);
 		});
 		return results;
+	};
+
+	Utils.prototype.merge = function () {
+		var res = [];
+		this.each(arguments, function (arg) {
+			var length = arg.length;
+			var i = -1;
+			var value;
+			while(++i < length) {
+				value = arg[i];
+				if (res.indexOf(value) === -1)
+					res.push(value);
+			}
+		});
+		return res;
+	};
+
+	Utils.prototype.parseName = function (moduleName) {
+		var t = moduleName.split(':');
+		var name = t[t.length - 1];
+		t.splice(-1, 1);
+		return {
+			alias: t.join(':'),
+			name: name
+		};
 	};
 
 	var _ = _ ? _ : new Utils();

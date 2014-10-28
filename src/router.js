@@ -38,6 +38,10 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 				});
 			},
 
+			accessPage: function (action, params, next) {
+				next();
+			},
+
 			go: function (url, options) {
 				if (options)
 					this.customLayout = options.layout;

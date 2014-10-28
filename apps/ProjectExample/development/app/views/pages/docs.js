@@ -1,7 +1,7 @@
 wellDefine('Views:Pages:Docs', function (app) {
 	this.use('Views:Common:Page');
 	this.use('Views:Partials:DocsSidebar');
-	this.options({
+	this.set({
 		template: 'Pages:Docs'
 	});
 	this.exports(function () {

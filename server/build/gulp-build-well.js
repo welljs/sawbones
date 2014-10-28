@@ -10,6 +10,9 @@ module.exports = function (app) {
 		gulp.src(seq(['utils', 'events', 'module', 'queue', 'modules', 'main']))
 			.pipe(app.concat('well.js'))
 			.pipe(app.wrap("(function(){\n\t 'use strict'; \n <%= contents%>  \n})();"))
+			.pipe(gulp.dest(app.wellRoot))
+			.pipe(app.rename('well.min.js'))
+			.pipe(app.uglify())
 			.pipe(gulp.dest(app.wellRoot));
 	});
 };

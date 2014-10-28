@@ -13,7 +13,7 @@ wellDefine('Plugins:Sawbones:Models', function (app) {
 		};
 
 		Controller.prototype.get = function (name) {
-			return app.Modules.getModule(name).exportFn();
+			return app.Modules.getModule(name).exportsFn();
 		};
 
 		Controller.prototype.set = function (module) {

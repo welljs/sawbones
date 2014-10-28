@@ -1,5 +1,5 @@
 wellDefine('Strategy', function (app, undefined) {
-	this.use('Vendor:JqueryWell', true);
+	this.use('Vendor:JqueryWell', {autoInit: true});
 	this.use('Vendor:UnderscoreWell');
 	this.use('Vendor:BackboneWell');
 	this.use('Vendor:HandlebarsWell');
