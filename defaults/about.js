@@ -1,6 +1,6 @@
 //страница по-умолчанию, если приложение не создано или не найдено
 wellDefine('Plugins:Sawbones:Defaults:About', function () {
-	this.options({
+	this.set({
 		template: ':About',
 		type: 'view',
 		isDefault: true

@@ -3,7 +3,9 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 		return new (Backbone.Router.extend({
 			currentPage: null,
 			initialize: function (options) {
-				this.config = {};
+				this.config = {
+					defaultPage: '/'
+				};
 			},
 
 			defineRoutes: function (routes) {
@@ -23,13 +25,21 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 			},
 
 			proxy: function () {
-				if (typeof _gaq !== 'undefined' && _.isArray(_gaq))
-					_gaq.push(['_trackPageview', Backbone.history.root + Backbone.history.getFragment()]);
 				var params = Array.prototype.slice.call(arguments);
 				var action = this.parseUrl(Backbone.history.fragment, params);
-				this.currentPage = action;
-				app.Events.trigger('ROUTER_PAGE_CHANGED', this.getRouteAction(action), {route: action, params: params});
-				this.customLayout = null;
+				var self = this;
+				this.accessPage(action, params, function (err) {
+					if (err)
+						return self.go(self.currentPage || self.config.defaultPage);
+
+					self.currentPage = action;
+					app.Events.trigger('ROUTER_PAGE_CHANGED', self.getRouteAction(action), {route: action, params: params});
+					self.customLayout = null;
+				});
+			},
+
+			accessPage: function (action, params, next) {
+				next();
 			},
 
 			go: function (url, options) {

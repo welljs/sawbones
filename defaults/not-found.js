@@ -1,7 +1,7 @@
 //страница 404 по-умолчанию, если не найдена пользовательская
 wellDefine('Plugins:Sawbones:Defaults:NotFound', function () {
 	this.use(':Layout');
-	this.options({
+	this.set({
 		template: ':NotFound',
 		type: 'view',
 		isDefault: true

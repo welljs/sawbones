@@ -9,7 +9,8 @@ wellDefine('Plugins:Sawbones:PageView', function (app) {
 			},
 			render: function () {
 				this.$el.html(this.template.render());
-			}
+			},
+			onPageLeave: function () {}
 		});
 	});
 });
