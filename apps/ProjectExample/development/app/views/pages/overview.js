@@ -1,7 +1,7 @@
 wellDefine('Views:Pages:Overview', function (app) {
 	this.use('Views:Common:Page');
 	this.use('Views:Partials:OverviewSidebar');
-	this.options({
+	this.set({
 		template: 'Pages:Overview'
 	});
 	this.exports(function () {

@@ -1,4 +1,7 @@
 wellDefine('Vendor:BackboneWell', function () {
+	this.set({
+		context: window
+	});
 	this.exports(function(){
 	 //     Backbone.js 1.1.2
 

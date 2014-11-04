@@ -1,10 +1,10 @@
 wellDefine('Strategy', function (app, undefined) {
-	this.use('Vendor:JqueryWell', true);
-	this.use('Vendor:UnderscoreWell', true);
-	this.use('Vendor:BackboneWell', true);
-	this.use('Vendor:HandlebarsWell', true);
-	this.use('Vendor:HighlightPackWell', true);
-	this.use('Plugins:Sawbones:Main', true);
+	this.use('Vendor:JqueryWell');
+	this.use('Vendor:UnderscoreWell');
+	this.use('Vendor:BackboneWell');
+	this.use('Vendor:HandlebarsWell');
+	this.use('Vendor:HighlightPackWell');
+	this.use('Plugins:Sawbones:Main');
 	this.use('Utils:HandlebarsHelpers');
 	this.use('Utils:Helpers');
 	this.exports(function () {

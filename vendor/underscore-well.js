@@ -1,4 +1,7 @@
 wellDefine('Vendor:UnderscoreWell', function () {
+	this.set({
+		context: window
+	});
 	this.exports(function(){
 	 //     Underscore.js 1.7.0
 //     http://underscorejs.org

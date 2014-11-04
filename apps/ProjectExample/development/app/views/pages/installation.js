@@ -1,6 +1,6 @@
 wellDefine('Views:Pages:Installation', function (app) {
 	this.use('Views:Common:Page');
-	this.options({
+	this.set({
 		template: 'Pages:Installation'
 	});
 	this.exports(function () {

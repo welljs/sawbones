@@ -32,22 +32,27 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 			getPartials: function (module) {
 				if (module) {
 					var mod = _.isString(module) ? this.getModule(module) : module;
-					return mod.getOption('partials') || [];
+					return mod.get('partials') || [];
 				}
 			},
 
 			getTemplate: function (module) {
 				if (module) {
 					var mod = _.isString(module) ? this.getModule(module) : module;
-					var name = mod.getOption('template');
+					var name = mod.get('template');
 					return app.Templates.get(name) || name;
 				}
 			},
 
 			onModuleDefined: function (module) {
-				if (module.isView)
+				if (this.isView(module))
 					this.complete(module);
 			},
+
+			isView: function (module) {
+				return module.get('type') === 'view' || module.name.indexOf('View') !== -1;
+			},
+
 
 			isCurrentLayout: function (viewName) {
 				return !!(this.currentLayout && this.currentLayout.name === viewName);
@@ -65,7 +70,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 				var templates = [];
 				var template = this.getTemplate(module);
 				if (template)
-					templates.push(module.getOption('template'));
+					templates.push(module.get('template'));
 
 				_.each(this.getPartials(module), function (partial) {
 					templates.push(partial);

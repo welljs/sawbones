@@ -1,4 +1,7 @@
 wellDefine('Vendor:HandlebarsWell', function () {
+	this.set({
+		context: window
+	});
 	this.exports(function(){
 	 /*!
 

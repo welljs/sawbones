@@ -1,4 +1,7 @@
 wellDefine('Vendor:JqueryWell', function () {
+	this.set({
+		context: window
+	});
 	this.exports(function(){
 	 /*!
  * jQuery JavaScript Library v2.1.1

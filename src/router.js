@@ -1,6 +1,6 @@
 wellDefine('Plugins:Sawbones:Router', function (app) {
 	this.exports(function () {
-		return Backbone.Router.extend({
+		return new (Backbone.Router.extend({
 			currentPage: null,
 			initialize: function (options) {
 				this.config = {};
@@ -69,6 +69,6 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 				var args = fragment.split('/');
 				return args[0] ? '/' + args[0] : '/';
 			}
-		});
+		}))();
 	});
 });
