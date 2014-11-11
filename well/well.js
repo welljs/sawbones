@@ -1,7 +1,8 @@
 (function(){
-	'use strict'; 
+	 'use strict'; 
  	var app;
 	var modulesController;
+	var noop = function(){};
 	//a bit of functionality borrowed from Underscore.js
 	var Utils = function () {};
 	var nativeKeys = Object.keys;
@@ -137,7 +138,11 @@
 	Utils.prototype.isObject = function (obj) {
 		var type = typeof obj;
 		return type === 'function' || type === 'object' && !!obj;
+	};
 
+	Utils.prototype.isString = function (obj) {
+		var type = typeof obj;
+		return type === 'string' && !!obj;
 	};
 
 	Utils.prototype.isArray = function (obj) {
@@ -273,22 +278,21 @@
 		};
 	};
 
-var Module = function (name, fn, next) {
-		_.extend(this, {
-			name: name,
-			deps: [],
-			options: {},
-			isComplete: true,
-			exportsFn: function(){}
-		});
-		try {
-			fn.call(this, app, modulesController);
-		}
-		catch (e) {
-			console.log('error in module: ' + name);
-		}
-		this.deps.length ? this.waitForDeps(next) : next(this);
-};
+	var Module = function (name, fn) {
+			_.extend(this, {
+				name: name,
+				deps: [],
+				options: {},
+				exportsFn: noop
+			});
+			try {
+				fn.call(this, app, modulesController);
+			}
+			catch (e) {
+				console.log('error in module: ' + name);
+			}
+			app.trigger('MODULE_DEFINED', this);
+	};
 
 	_.extend(Module.prototype, {
 		use: function (moduleName, options) {
@@ -297,8 +301,11 @@ var Module = function (name, fn, next) {
 			return this;
 		},
 
-		set: function (options) {
-			this.options = options || {};
+		set: function (options, value) {
+			if (_.isString(options) && !!value)
+				this.options[options] = value;
+			if (_.isObject(options) && !!options)
+				_.extend(this.options, options);
 			return this;
 		},
 
@@ -326,6 +333,10 @@ var Module = function (name, fn, next) {
 			return t.splice(-1, 1);
 		},
 
+		getDeps: function () {
+			return this.deps;
+		},
+
 		_isShortHand: function (name) {
 			return name[0] === ':';
 		},
@@ -336,48 +347,6 @@ var Module = function (name, fn, next) {
 			var t = this.name.split(':');
 			t.splice(-1, 1);
 			return	t.join(':') + name;
-		},
-
-		_closeInitHandler: function (event, prop) {
-			var self = this;
-			modulesController.on(event, function (module) {
-				self[prop] = module.init();
-				modulesController.off(event, null, self);
-			}, this);
-		},
-
-		_defineDeps: function () {
-			_.each(this.deps, function (dependency) {
-				var prop = dependency.options.as || _.parseName(dependency.name).name;
-				this[prop] = (dependency.options.autoInit !== false)
-					? modulesController.getModule(dependency.name).init()
-					: modulesController.get(dependency.name);
-			}, this)
-		},
-
-		waitForDeps: function (next) {
-			// на продакше модули собраны в один файл.
-			// их не надо подгружать, нужно просто дождаться пока определятся нужные
-			if (app.isProduction) {
-				this._defineDeps();
-				next(this);
-			}
-			else {
-				this.isComplete = false;
-				var depsNames = _.map(this.deps, function (dep) {
-					return dep.name;
-				});
-				var deps = _.clone(modulesController.findMissing(depsNames));
-				var self = this;
-				//на девелопменте разобраны по файлам и их надо подгружать
-				modulesController.require(depsNames, function (err, modules) {
-					if (err)
-						return console.log('Error in deps requiring...', err);
-					self._defineDeps();
-					next(self);
-				});
-			}
-			return this;
 		}
 	});
 
@@ -386,49 +355,92 @@ var Module = function (name, fn, next) {
 		this.modules = {};
 		this.names = modulesController.findMissing(names);
 		this.next = next;
-		if (this.names) {
-			modulesController.on('MODULE_DEFINED', this.onModuleDefined, this);
-			return app.vendorRequire(this._namesToPaths(this.names), function(){}, function (err) {
-				next(err);
-			});
-		}
-		else
+
+		if (!this.names.length)
 			return next(undefined, modulesController.pack(names));
+
+		app.on('MODULE_DEFINED', this.onModuleDefined, this);
+		this.names = this._extendNames(this.names);
+		this.orderedMods = this.names.slice(0);
+		this.enqueue(this.names);
 	};
 
 	_.extend(Queue.prototype, {
+
 		isQueueEmpty: function () {
 			return !this.names.length;
 		},
 
-		_namesToPaths: function (names) {
-			return _.map(names, function (name) {
-				return app.transformToPath(name);
+		_extendNames: function (args) {
+			return _.map(args, function (arg) {
+				return _.isString(arg) ? {name: arg, options: {}} : arg;
+			})
+		},
+
+		_toPaths: function (args) {
+			return _.map(args, function (arg) {
+				return app.transformToPath(arg.name);
 			}, this);
 		},
 
-		onModuleDefined: function (module, undefined) {
-			//если модуль из этой очереди, то удалить его из очереди
-			if (!this.isModuleFromThisQueue(module.name))
-				return;
-
-			this.modules[module.name] = module;
-			this.names.splice(this.names.indexOf(module.name), 1);
-
-			//когда все модули загружены
-			if (this.isQueueEmpty()) {
-				modulesController.off('MODULE_DEFINED', this.onModuleDefined, this);
-				//формирую список модулей и их зависимостей
-				var exportList =_.extend(this.modules, modulesController.getDeps(this.modules));
-				//колбэк самого первого уровня вложенности (относительно очереди)
-				this.next(undefined, exportList);
+		onModuleDefined: function (module) {
+			if (this.isModuleFromThisQueue(module.name)) {
+				this.handleModule(module);
+				var deps = modulesController.findMissing(module.getDeps());
+				deps.length 
+					? this.enqueue(deps)
+					: (this.isQueueEmpty() && this.complete());
 			}
-			return this;
+		},
+
+		handleModule: function (module) {
+			modulesController.add(module);
+			var names = this.names;
+			var i, m, len;
+			this.modules[module.name] = module;
+			for (i = 0, len = names.length; i < len; i++ ) {
+				m = names[i];
+				if (m.name === module.name)
+					break;
+			}
+			module.set(m.options);
+			this.names.splice(i, 1);
+		},
+
+		enqueue: function (args) {
+			var self = this;
+			this.names = _.merge(this.names, args);
+			return app.vendorRequire(this._toPaths(this.names), noop, function (err) {
+				self.complete(err);
+			});
+		},
+
+		complete: function (err) {
+			app.off('MODULE_DEFINED', this.onModuleDefined, this);
+			this.initModules();
+			var exportList =_.extend(this.modules, modulesController.getDeps(this.modules));
+			this.next(err, exportList);
+		},
+
+		initModules: function (deps, context) {
+			var self = this;
+			_.each(deps || this.orderedMods, function (dep) {
+				var mod = modulesController.getModule(dep.name);
+				var deps = mod.getDeps();
+				var prop = dep.options.as || _.parseName(dep.name).name;
+				if (deps.length)
+					self.initModules(deps, mod);
+				context && self.bindProp(context, prop, dep.options.autoInit !== false ? mod.init() : modulesController.get(dep.name));
+			});
+		},
+
+		bindProp: function (context, prop, value) {
+			context[prop] = value;
 		},
 
 		isModuleFromThisQueue: function (moduleName) {
 			return !!_.find(this.names, function (module) {
-				return module === moduleName;
+				return module.name === moduleName;
 			});
 		}
 	});
@@ -436,10 +448,14 @@ var Module = function (name, fn, next) {
 
 	var Modules = function(mainApp) {};
 
-	_.extend(Modules.prototype, EventsController(), {
+	_.extend(Modules.prototype, {
 		modules: {},
 		get: function (name) {
 			return this.modules[name].exportsFn;
+		},
+
+		add: function (module) {
+			return this.modules[module.name] = module;
 		},
 
 		getModule: function (name) {
@@ -449,7 +465,7 @@ var Module = function (name, fn, next) {
 		//поиск по атрибутам которые указаны в this.options(). например по шаблону или по пути
 		findBy: function (option, value) {
 			return _.find(this.modules, function (module) {
-				return module.props[option] === value;
+				return module.options[option] === value;
 			}, this);
 		},
 
@@ -460,19 +476,13 @@ var Module = function (name, fn, next) {
 			}, this);
 		},
 
-		//AMD provider wrapper
-		require: function (modules, next) {
-			new Queue(modules, next);
-			return this;
-		},
-
 		exist: function (moduleName) {
 			return !!this.modules[moduleName];
 		},
 
 		findMissing: function (list) {
-			return _.filter(list, function (moduleName) {
-				return !this.exist(moduleName);
+			return _.filter(list, function (mod) {
+				return !this.exist(_.isString(mod) ? mod : mod.name);
 			}, this);
 		},
 
@@ -488,7 +498,7 @@ var Module = function (name, fn, next) {
 			var res = {};
 			_.each(modules, function (module) {
 				_.each(module.deps, function (dep) {
-					res[dep] = this.getModule(dep.name);
+					res[dep.name] = this.getModule(dep.name);
 				}, this)
 			}, this);
 			return res;
@@ -498,9 +508,11 @@ var Module = function (name, fn, next) {
 
 	var Main = function (options, undefined) {
 		app = this;
-		this.isProduction = options.isProduction;
-		this.options = options;
-		this.name = this.options.appName || 'WellApp';
+		_.extend(this, {
+			isProduction: options.isProduction,
+			options: options,
+			name: options.appName || 'WellApp'
+		});
 		window[this.name] = this;
 		window.wellDefine = this.define.bind(this);
 		//turn off amd support
@@ -509,7 +521,7 @@ var Module = function (name, fn, next) {
 		this.init();
 	};
 
-	_.extend(Main.prototype, {
+	_.extend(Main.prototype, EventsController(), {
 		init: function () {
 			var options = this.options;
 			if (_.isFunction(options.vendorRequire))
@@ -525,7 +537,7 @@ var Module = function (name, fn, next) {
 				return console.log('There is no application strategy defined');
 
 			var self = this;
-			this.Modules.require([options.strategy], function (err) {
+			this.require([options.strategy], function (err) {
 				if (err)
 					return console.log('Error in strategy loading! ', err);
 				var mod = self.Modules.getModule(options.strategy);
@@ -534,16 +546,18 @@ var Module = function (name, fn, next) {
 		},
 
 		define: function (moduleName, fn) {
-			var self = this;
-			new Module(moduleName, fn, function (module) {
-				modulesController.modules[moduleName] = module;
-				modulesController.trigger('MODULE_DEFINED', module);
-			});
+			new Module(moduleName, fn);
 			return this;
 		},
 
 		transformToPath: function (name) {
 			return name ? name.split(/(?=[A-Z])/).join('-').toLowerCase().split(':-').join('/') : name;
+		},
+
+		//AMD provider wrapper
+		require: function (modules, next) {
+			new Queue(modules, next);
+			return this;
 		},
 
 		vendorRequire: function (modules, next, err) {

@@ -2,7 +2,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 	this.exports(function(){
 		var Controller = function () {
 			app.Events.on('ROUTER_PAGE_CHANGED', this.tryToRender, this);
-			app.Modules.on('MODULE_DEFINED', this.onModuleDefined, this);
+			app.on('MODULE_DEFINED', this.onModuleDefined, this);
 		};
 		
 		_.extend(Controller.prototype, {
@@ -136,7 +136,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 				layout = this.getModule(layoutName);
 				//загрузка лэйаута
 				if (!layout) {
-					return app.Modules.require([layoutName], function (modules, queue) {
+					return app.require([layoutName], function (err, modules) {
 						self.waitOnQueueComplete(modules, function () {
 							self.tryToRender(action, params);
 						});
@@ -152,13 +152,13 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 
 				page = this.getModule(pageName);
 				if (!page) {
-					return app.Modules.require([pageName], function (modules, queue) {
+					return app.require([pageName], function (err, modules) {
 						self.waitOnQueueComplete(modules, function () {
 							self.tryToRender(action, params);
 						});
 					}, function () {
 						if (!self.getModule('Well:Defaults:NotFound')) {
-							return app.Modules.require(['Well:Defaults:NotFound'], function (modules, queue) {
+							return app.require(['Well:Defaults:NotFound'], function (err, modules) {
 								self.waitOnQueueComplete(modules, function () {
 									self.tryToRender('Well:Defaults:NotFound', params);
 								});

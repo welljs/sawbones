@@ -1,8 +1,10 @@
 	var Main = function (options, undefined) {
 		app = this;
-		this.isProduction = options.isProduction;
-		this.options = options;
-		this.name = this.options.appName || 'WellApp';
+		_.extend(this, {
+			isProduction: options.isProduction,
+			options: options,
+			name: options.appName || 'WellApp'
+		});
 		window[this.name] = this;
 		window.wellDefine = this.define.bind(this);
 		//turn off amd support
@@ -11,7 +13,7 @@
 		this.init();
 	};
 
-	_.extend(Main.prototype, {
+	_.extend(Main.prototype, EventsController(), {
 		init: function () {
 			var options = this.options;
 			if (_.isFunction(options.vendorRequire))
@@ -27,7 +29,7 @@
 				return console.log('There is no application strategy defined');
 
 			var self = this;
-			this.Modules.require([options.strategy], function (err) {
+			this.require([options.strategy], function (err) {
 				if (err)
 					return console.log('Error in strategy loading! ', err);
 				var mod = self.Modules.getModule(options.strategy);
@@ -36,16 +38,18 @@
 		},
 
 		define: function (moduleName, fn) {
-			var self = this;
-			new Module(moduleName, fn, function (module) {
-				modulesController.modules[moduleName] = module;
-				modulesController.trigger('MODULE_DEFINED', module);
-			});
+			new Module(moduleName, fn);
 			return this;
 		},
 
 		transformToPath: function (name) {
 			return name ? name.split(/(?=[A-Z])/).join('-').toLowerCase().split(':-').join('/') : name;
+		},
+
+		//AMD provider wrapper
+		require: function (modules, next) {
+			new Queue(modules, next);
+			return this;
 		},
 
 		vendorRequire: function (modules, next, err) {

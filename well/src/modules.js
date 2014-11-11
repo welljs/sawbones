@@ -1,9 +1,13 @@
 	var Modules = function(mainApp) {};
 
-	_.extend(Modules.prototype, EventsController(), {
+	_.extend(Modules.prototype, {
 		modules: {},
 		get: function (name) {
 			return this.modules[name].exportsFn;
+		},
+
+		add: function (module) {
+			return this.modules[module.name] = module;
 		},
 
 		getModule: function (name) {
@@ -13,7 +17,7 @@
 		//поиск по атрибутам которые указаны в this.options(). например по шаблону или по пути
 		findBy: function (option, value) {
 			return _.find(this.modules, function (module) {
-				return module.props[option] === value;
+				return module.options[option] === value;
 			}, this);
 		},
 
@@ -24,19 +28,13 @@
 			}, this);
 		},
 
-		//AMD provider wrapper
-		require: function (modules, next) {
-			new Queue(modules, next);
-			return this;
-		},
-
 		exist: function (moduleName) {
 			return !!this.modules[moduleName];
 		},
 
 		findMissing: function (list) {
-			return _.filter(list, function (moduleName) {
-				return !this.exist(moduleName);
+			return _.filter(list, function (mod) {
+				return !this.exist(_.isString(mod) ? mod : mod.name);
 			}, this);
 		},
 
@@ -52,7 +50,7 @@
 			var res = {};
 			_.each(modules, function (module) {
 				_.each(module.deps, function (dep) {
-					res[dep] = this.getModule(dep.name);
+					res[dep.name] = this.getModule(dep.name);
 				}, this)
 			}, this);
 			return res;

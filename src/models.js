@@ -4,7 +4,7 @@ wellDefine('Plugins:Sawbones:Models', function (app) {
 			this.initialized ={};
 			this.modules = {};
 			this.config = {};
-			app.Modules.on('MODULE_DEFINED', this.onModuleDefined, this);
+			app.on('MODULE_DEFINED', this.onModuleDefined, this);
 		};
 
 		Controller.prototype.onModuleDefined = function (module) {
