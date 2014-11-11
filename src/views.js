@@ -90,9 +90,9 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 			getIncomplete: function (modules) {
 				var res = [];
 				_.each(modules, function (mod) {
-					if (!mod.isComplete)
+					if (this.isView(mod) && mod.get('template') && !mod.isComplete)
 						res.push(mod.name);
-				});
+				}, this);
 				return res;
 			},
 
