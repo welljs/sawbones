@@ -4,22 +4,40 @@ __Sawbones__ - это плагин для фреймоврка [Welljs](https://
 
 ```javascript
 wellDefine('Strategy', function (app, undefined) {
-	this.use('Vendor:JqueryWell', true);
-	this.use('Vendor:UnderscoreWell', true);
-	this.use('Vendor:BackboneWell', true);
-	this.use('Vendor:HandlebarsWell', true);
-	this.use('Vendor:HighlightPackWell', true);
-	this.use('Plugins:Sawbones:Main', true);
-	this.use('Utils:HandlebarsHelpers', true);
-	this.use('Utils:Helpers', true);
+	this.use('Vendor:JqueryWell');
+	this.use('Vendor:UnderscoreWell');
+	this.use('Vendor:BackboneWell');
+	this.use('Vendor:HandlebarsWell');
+	this.use('Vendor:HighlightPackWell');
+	this.use('Plugins:Sawbones:Main', {as: 'Sawbones'});
+	this.use('Utils:HandlebarsHelpers');
+	this.use('Utils:Helpers');
 	this.exports(function () {
 		var WellSite = function () {
+			this.init();
+			this.configure();
+			this.start();
+		};
+		WellSite.prototype.init = function () {
+			//global Helpers
+			new this.Helpers();
+			//initializing Handlebars helpers
+			new this.HandlebarsHelpers();
+			return this;
+		};
+
+		WellSite.prototype.configure = function () {
+			// После инициализации плагина появляются глобальные объекты-контроллеры: 
+			// Router, Views, Templates, Models, Collections, PageView
+
+			//Конфигурация роутера
 			app.Router.configure({
 				actions: {
 					'/': 'Views:Pages:Overview',
 					'/installation': 'Views:Pages:Installation',
 					'/features': {
 						page: 'Views:Pages:Features',
+						//можно указывать layout
 						layout: 'Views:Layouts:Main'
 					},
 					'/docs': {
@@ -37,13 +55,22 @@ wellDefine('Strategy', function (app, undefined) {
 				layoutHolder: '#site-container',
 				layoutModule: 'Views:Layouts:Main'
 			});
-			
+
 			app.Templates.configure({
-				root: '/app/templates/'
+				root:'/app/templates/'
 			});
-			
+
+			return this;
+		};
+
+		WellSite.prototype.start = function () {
+			$('body').on('click', 'a[href^="/"]', function (e) {
+				e.preventDefault();
+				app.Router.go($(this).attr('href'), {trigger: true});
+			});
+
 			$(document).ready(function () {
-				app.Router.start();
+				app.Router.start({pushState: true});
 			})
 		};
 		return new WellSite();
