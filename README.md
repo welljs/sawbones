@@ -22,7 +22,7 @@ wellDefine('Strategy', function (app, undefined) {
 			//global Helpers
 			new this.Helpers();
 			//initializing Handlebars helpers
-			new this.HandlebarsHelpers();
+			new this.HH();
 			return this;
 		};
 
