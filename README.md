@@ -4,11 +4,11 @@ __Sawbones__ - это плагин для фреймоврка [Welljs](https://
 
 ```javascript
 wellDefine('Strategy', function (app, undefined) {
-	this.use('Vendor:JqueryWell');
-	this.use('Vendor:UnderscoreWell');
-	this.use('Vendor:BackboneWell');
-	this.use('Vendor:HandlebarsWell');
-	this.use('Vendor:HighlightPackWell');
+	this.use('Vendor:Jquery');
+	this.use('Vendor:Underscore');
+	this.use('Vendor:Backbone');
+	this.use('Vendor:Handlebars');
+	this.use('Vendor:HighlightPack');
 	this.use('Plugins:Sawbones:Main', {as: 'Sawbones'});
 	this.use('Utils:HandlebarsHelpers');
 	this.use('Utils:Helpers');
