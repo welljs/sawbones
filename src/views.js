@@ -76,15 +76,12 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 					templates.push(partial);
 				}, this);
 
-				if (_.isEmpty(templates))
-					return terminate();
-
-				//если есть шаблоны, то заргужаются
-				else {
-					app.Templates.load(templates, function () {
+				return _.isEmpty(templates)
+					? terminate()
+					: app.Templates.load(templates, function () {
 						return terminate();
 					});
-				}
+
 			},
 
 			getIncomplete: function (modules) {

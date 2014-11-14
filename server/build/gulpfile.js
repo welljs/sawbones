@@ -13,6 +13,6 @@ var app = {
 app.utils = require('./utils.js')(app);
 require('./gulp-wrap-vendor.js')(app);
 require('./gulp-uglify-vendor.js')(app);
-require('./gulp-uglify-sawbones.js')(app);
+require('./gulp-build.js')(app);
 
 app.gulp.task('default', function () {});
