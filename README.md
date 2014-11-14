@@ -10,7 +10,7 @@ wellDefine('Strategy', function (app, undefined) {
 	this.use('Vendor:Handlebars');
 	this.use('Vendor:HighlightPack');
 	this.use('Plugins:Sawbones:Main', {as: 'Sawbones'});
-	this.use('Utils:HandlebarsHelpers');
+	this.use('Utils:HandlebarsHelpers', {as: 'HH'});
 	this.use('Utils:Helpers');
 	this.exports(function () {
 		var WellSite = function () {
