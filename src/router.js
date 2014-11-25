@@ -14,12 +14,9 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 				_.each(routes, function (route) {
 					this.route(route, 'proxy');
 				}, this);
-				Backbone.history.handlers.push({
-					route: /(.*)/,
-					callback: function () {
-						router.go('/');
-						return this;
-					}
+				this.route(/(.*)/, function () {
+					router.go('/');
+					return this;
 				});
 				return this;
 			},
