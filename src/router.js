@@ -10,14 +10,13 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 
 			defineRoutes: function (routes) {
 				var router = this;
-				//Backbone routes
-				_.each(routes, function (route) {
-					this.route(route, 'proxy');
-				}, this);
 				this.route(/(.*)/, function () {
 					router.go('/');
 					return this;
 				});
+				_.each(routes, function (route) {
+					this.route(route, 'proxy');
+				}, this);
 				return this;
 			},
 
