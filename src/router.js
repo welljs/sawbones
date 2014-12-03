@@ -24,9 +24,9 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 				var params = Array.prototype.slice.call(arguments);
 				var action = this.parseUrl(Backbone.history.fragment, params);
 				var self = this;
-				this.accessPage(action, params, function (err) {
+				this.accessPage(action, params, function (err, url) {
 					if (err)
-						return self.go(self.currentPage || self.config.defaultPage);
+						return self.go(url || self.currentPage || self.config.defaultPage);
 
 					self.currentPage = action;
 					app.Events.trigger('ROUTER_PAGE_CHANGED', self.getRouteAction(action), {route: action, params: params});
