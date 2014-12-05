@@ -36,7 +36,7 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 				},
 
 				exist: function (name) {
-					return this.storage[name];
+					return !!this.storage[name];
 				},
 
 				registerPartial: function (opts) {

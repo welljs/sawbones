@@ -10,17 +10,13 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 
 			defineRoutes: function (routes) {
 				var router = this;
-				//Backbone routes
+				this.route(/(.*)/, function () {
+					router.go('/');
+					return this;
+				});
 				_.each(routes, function (route) {
 					this.route(route, 'proxy');
 				}, this);
-				Backbone.history.handlers.push({
-					route: /(.*)/,
-					callback: function () {
-						router.go('/');
-						return this;
-					}
-				});
 				return this;
 			},
 
@@ -28,9 +24,9 @@ wellDefine('Plugins:Sawbones:Router', function (app) {
 				var params = Array.prototype.slice.call(arguments);
 				var action = this.parseUrl(Backbone.history.fragment, params);
 				var self = this;
-				this.accessPage(action, params, function (err) {
+				this.accessPage(action, params, function (err, url) {
 					if (err)
-						return self.go(self.currentPage || self.config.defaultPage);
+						return self.go(url || self.currentPage || self.config.defaultPage);
 
 					self.currentPage = action;
 					app.Events.trigger('ROUTER_PAGE_CHANGED', self.getRouteAction(action), {route: action, params: params});
