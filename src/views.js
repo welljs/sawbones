@@ -81,6 +81,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 
 				//если есть шаблоны, то заргужаются
 				else {
+					module.isComplete = false;
 					app.Templates.load(templates, function () {
 						return terminate();
 					});
