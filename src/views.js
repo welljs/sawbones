@@ -183,7 +183,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 				this.renderLayout.apply(this, [layout, params.params]);
 
 				var pageView = this.getInitialized(page);
-				pageView.requestData(params.params, function() {
+				pageView.requestData.apply(pageView, params.params, function() {
 					self.renderPage.apply(self, [page, params.params]);
 					self.hideOverlay();
 					app.Events.trigger('PAGE_RENDERED', {page: page, layout: layout, params: params.params});
@@ -208,7 +208,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 			_render: function (module, params) {
 				var view = this.getInitialized(module);
 				if (_.isFunction(view.render)) {
-					view.render(params);
+					view.render.apply(view, params);
 				}
 				return view;
 			},
