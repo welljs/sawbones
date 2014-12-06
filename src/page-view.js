@@ -4,7 +4,7 @@ wellDefine('Plugins:Sawbones:PageView', function (app) {
 			setTemplate: function (name) {
 				this.template = app.Templates.get(name);
 			},
-			requestData: function (next) {
+			requestData: function (args, next) {
 				next();
 			},
 			render: function () {
