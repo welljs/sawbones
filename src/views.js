@@ -183,7 +183,7 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 				this.renderLayout.apply(this, [layout, params.params]);
 
 				var pageView = this.getInitialized(page);
-				pageView.requestData(function() {
+				pageView.requestData(params.params, function() {
 					self.renderPage.apply(self, [page, params.params]);
 					self.hideOverlay();
 					app.Events.trigger('PAGE_RENDERED', {page: page, layout: layout, params: params.params});
