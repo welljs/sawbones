@@ -46,7 +46,7 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 					if (app.isProduction)
 						Handlebars.partials[opts.partialName] = Handlebars.templates[app.transformToPath(opts.templateName)];
 					else
-						Handlebars.registerPartial(opts.partialName, opts.html || this.get(opts.templateName).render());
+						Handlebars.registerPartial(opts.partialName || opts.templateName, opts.html || this.get(opts.templateName).render());
 				},
 
 				isNotFound: function (name) {
