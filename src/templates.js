@@ -53,7 +53,8 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 					return (name.indexOf('NotFound') !== -1 || name.indexOf('not-found') !== -1);
 				},
 
-				load: function (files, next, err) {
+				load: function (files, next, options) {
+					options = options || {};
 					if (_.isString(files))
 						files = [files];
 					var missing = _.filter(files, function (file) {
@@ -63,7 +64,7 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 					var defs = [];
 					_.each(missing, function (file, index) {
 						defs.push(
-							this.getAjax(file, err)
+							this.getAjax(file, options)
 						);
 					}, this);
 					$.when.apply($, defs).then(
@@ -72,8 +73,8 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 				},
 
 				//from html
-				getAjax: function (file, err) {
-					var path = (this.config.root || '/') + app.transformToPath(file);
+				getAjax: function (file, options) {
+					var path = (options.root || this.config.root || '/') + app.transformToPath(file);
 					return $.ajax({
 						url: path + '.html',
 						dataType: 'html',
@@ -86,7 +87,7 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 							this.storage[file] = template;
 						},
 						error: function (res) {
-							_.isFunction(err) && err(res);
+							console.error(res);
 						}
 					})
 				},
