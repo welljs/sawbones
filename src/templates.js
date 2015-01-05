@@ -84,7 +84,7 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 								path: path,
 								renderer: Handlebars.compile(html)
 							});
-							this.storage[file] = template;
+							this.storage[(options.prefix || '') + file] = template;
 						},
 						error: function (res) {
 							console.error(res);
