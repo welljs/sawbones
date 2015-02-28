@@ -4,6 +4,7 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 			function create (opts) {
 				return {
 					path: opts.path,
+					html: opts.html,
 					render: function (data) {
 						return opts.renderer(data)
 					}
@@ -46,7 +47,7 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 					if (app.isProduction)
 						Handlebars.partials[opts.partialName] = Handlebars.templates[app.transformToPath(opts.templateName)];
 					else
-						Handlebars.registerPartial(opts.partialName || opts.templateName, opts.html || this.get(opts.templateName).render());
+						Handlebars.registerPartial(opts.partialName || opts.templateName, opts.html || this.get(opts.templateName).html);
 				},
 
 				isNotFound: function (name) {
@@ -58,7 +59,7 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 					if (_.isString(files))
 						files = [files];
 					var missing = _.filter(files, function (file) {
-						return !this.exist(file)
+						return !this.exist(file) && !this.exist(options.prefix + file);
 					}, this);
 
 					var defs = [];
@@ -82,7 +83,8 @@ wellDefine('Plugins:Sawbones:Templates', function (app) {
 						success: function (html) {
 							var template = create({
 								path: path,
-								renderer: Handlebars.compile(html)
+								renderer: Handlebars.compile(html),
+								html: html
 							});
 							this.storage[(options.prefix || '') + file] = template;
 						},
