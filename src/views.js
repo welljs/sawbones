@@ -113,6 +113,15 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 				}, this);
 			},
 
+			serverSideRendered: function () {
+			  return !!window.serverSideRendered;
+//				return false;
+			},
+
+			resetServerSideFlag: function (undefined) {
+				window.serverSideRendered = undefined;
+			},
+
 			tryToRender: function (action, params) {
 				var page, layout, self = this, o, layoutName, pageName;
 				this.showOverlay();
@@ -178,16 +187,25 @@ wellDefine('Plugins:Sawbones:Views', function (app) {
 
 				if (this.currentPage)
 					app.Events.trigger('PAGE_LEAVE', this.currentPage.view);
+
 				//когда загружены все данные, можно отрендерить лэйаут и страницу
 				app.Events.trigger('BEFORE_PAGE_RENDERED', {page: page, layout: layout, params: params.params});
 				this.renderLayout.apply(this, [layout, params.params]);
 
+				page.el = this.currentLayout.view.pageContainer;
 				var pageView = this.getInitialized(page);
-				pageView.requestData(params.params, function() {
+
+				function terminateRender () {
 					self.renderPage.apply(self, [page, params.params]);
 					self.hideOverlay();
 					app.Events.trigger('PAGE_RENDERED', {page: page, layout: layout, params: params.params});
-				});
+					self.resetServerSideFlag();
+				}
+
+				if (this.serverSideRendered())
+					terminateRender();
+				else
+					pageView.requestData(params.params, terminateRender);
 				return this;
 			},
 
